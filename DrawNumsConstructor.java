@@ -29,13 +29,8 @@ public class DrawNumsConstructor extends PaintedObjects
 	FullSudoku ourSentSudoku;
 
 
-	// Central hub for solving through human techniques
-
-	UsingLogicalMethods inputForSolving;
-
-
 	// Makes sure the puzzle is solvable, and later applies
-	// that solution if UsingLogicalMethods falters
+	// that solution if the human methods falter
 
 	NonhumanSolver theNonhumanSolver;
 
@@ -120,7 +115,7 @@ public class DrawNumsConstructor extends PaintedObjects
 	{
 		// Give the PaintedObjects the information
 
-		int currentSolveStep = inputForSolving.getStepNum();
+		int currentSolveStep = ourSentSudoku.stepOfSolve;
 
 		for(int i=0;i<numRowInGrid;i++)
 		{
@@ -301,7 +296,6 @@ public class DrawNumsConstructor extends PaintedObjects
 
 			theNonhumanSolver = new NonhumanSolver(ourSentSudoku);
 			int virtualSolveSolutions = theNonhumanSolver.dancingLinksSolve();
-			System.out.println(virtualSolveSolutions);
 
 			if(virtualSolveSolutions <= 0)
 			{
@@ -323,11 +317,6 @@ public class DrawNumsConstructor extends PaintedObjects
 
 				recToWorkWith.setDrawStatus(false);
 				recToWorkWith.repaint();
-
-
-				// Create UsingLogicalMethods which will apply solve methods
-
-				inputForSolving = new UsingLogicalMethods(ourSentSudoku);
 
 
 				// If this function was called using the itsTheSolveButton
@@ -372,21 +361,21 @@ public class DrawNumsConstructor extends PaintedObjects
 	{
 		holderOfAllSteps.addOneStep(bundleInTilde("Puzzle Start!"));
 
-		String incomingText;
+		StepInfo stepInfo;
 
 		do
 		{
-			incomingText = inputForSolving.solveOneStep();
+			stepInfo = ourSentSudoku.solveOneStep();
 
-			if(incomingText != null)
+			if(stepInfo != null)
 			{
-				holderOfAllSteps.addOneStep(bundleInTilde(incomingText));
+				holderOfAllSteps.addOneStep(bundleInTilde(stepInfo.getStepExplainString()));
 			}
 		}
-		while(incomingText != null);
+		while(stepInfo != null);
 
 
-		if(ourSentSudoku.squaresSolved == 81)
+		if(ourSentSudoku.amountSquaresSolved == 81)
 		{
 			holderOfAllSteps.addOneStep(bundleInTilde(puzzleDoneMessage));
 
@@ -407,17 +396,17 @@ public class DrawNumsConstructor extends PaintedObjects
 
 	private void advanceOneStep()
 	{
-		String incomingText = inputForSolving.solveOneStep();
+		StepInfo stepInfo = ourSentSudoku.solveOneStep();
 
-		if(ourSentSudoku.squaresSolved == 81)
+		if(ourSentSudoku.amountSquaresSolved == 81)
 		{
-			holderOfAllSteps.addOneStep(bundleInTilde(incomingText));
+			holderOfAllSteps.addOneStep(bundleInTilde(stepInfo.getStepExplainString()));
 
 			holderOfAllSteps.addOneStep(bundleInTilde(puzzleDoneMessage));
 
 			setStepsButton(stepsButtonPurpose.Nothing);
 		}
-		else if(incomingText == null)
+		else if(stepInfo == null)
 		{
 			holderOfAllSteps.addOneStep(bundleInTilde(noProgressMessage));
 
@@ -425,7 +414,7 @@ public class DrawNumsConstructor extends PaintedObjects
 		}
 		else
 		{
-			holderOfAllSteps.addOneStep(bundleInTilde(incomingText));
+			holderOfAllSteps.addOneStep(bundleInTilde(stepInfo.getStepExplainString()));
 		}
 
 

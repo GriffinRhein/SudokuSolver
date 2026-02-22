@@ -1,30 +1,30 @@
 public class BoxTranslator
 {
-	private int[][] coolBoxCoordinates = new int[][]{{0,1,2,0,1,2},
-													 {0,1,2,3,4,5},
-													 {0,1,2,6,7,8},
-													 {3,4,5,0,1,2},
-													 {3,4,5,3,4,5},
-													 {3,4,5,6,7,8},
-													 {6,7,8,0,1,2},
-													 {6,7,8,3,4,5},
-													 {6,7,8,6,7,8} };
+	static private int[][] coolBoxCoordinates = new int[][]{{0,1,2,0,1,2},
+															{0,1,2,3,4,5},
+															{0,1,2,6,7,8},
+															{3,4,5,0,1,2},
+															{3,4,5,3,4,5},
+															{3,4,5,6,7,8},
+															{6,7,8,0,1,2},
+															{6,7,8,3,4,5},
+															{6,7,8,6,7,8} };
 
 	// Box indicated with int from 0-8
 	// Square indicated with int from 0-8
 
-	public int rowOfBoxSquare(int boxInQuestion, int squareInThatBox)
+	static public int rowOfBoxSquare(int boxInQuestion, int squareInThatBox)
 	{
 		return coolBoxCoordinates[boxInQuestion][squareInThatBox / 3];
 	}
 
-	public int colOfBoxSquare(int boxInQuestion, int squareInThatBox)
+	static public int colOfBoxSquare(int boxInQuestion, int squareInThatBox)
 	{
 		return coolBoxCoordinates[boxInQuestion][(squareInThatBox % 3) + 3];
 	}
 
 
-	public boolean doesRowOverlapBox(int boxInQuestion, int rowInQuestion)
+	static public boolean doesRowOverlapBox(int boxInQuestion, int rowInQuestion)
 	{
 		if(rowInQuestion != coolBoxCoordinates[boxInQuestion][0])
 		{
@@ -40,7 +40,7 @@ public class BoxTranslator
 		return true;
 	}
 
-	public boolean doesColOverlapBox(int boxInQuestion, int colInQuestion)
+	static public boolean doesColOverlapBox(int boxInQuestion, int colInQuestion)
 	{
 		if(colInQuestion != coolBoxCoordinates[boxInQuestion][3])
 		{

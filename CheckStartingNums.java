@@ -136,14 +136,13 @@ public class CheckStartingNums
 	{
 		String[] boxProvided = new String[9];
 
-		BoxTranslator myUnboxer = new BoxTranslator();
 		int goodRow;
 		int goodCol;
 
 		for(int i=0;i<9;i++)
 		{
-			goodRow = myUnboxer.rowOfBoxSquare(boxNum,i);
-			goodCol = myUnboxer.colOfBoxSquare(boxNum,i);
+			goodRow = BoxTranslator.rowOfBoxSquare(boxNum,i);
+			goodCol = BoxTranslator.colOfBoxSquare(boxNum,i);
 
 			boxProvided[i] = stringArray[goodRow][goodCol];
 		}

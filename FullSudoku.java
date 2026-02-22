@@ -8,11 +8,11 @@ public class FullSudoku
 
 	String[][] forNumsUseFill;
 
-	int squaresSolved = 0;
+	int amountSquaresSolved = 0;
 
 	int initialInputSquares = 0;
 
-	BoxTranslator theUnboxer = new BoxTranslator();
+	int stepOfSolve = 0;
 
 
 	private boolean impossiblePuzzle = false;
@@ -20,20 +20,6 @@ public class FullSudoku
 	boolean isPuzzleImpossible()
 	{
 		return impossiblePuzzle;
-	}
-
-
-	// What's neat is that this should never result in a
-	// NullPointerException. From the moment the constructor
-	// uses NakedSingle() to process the user-input squares
-	// from the linked list, mostRecentSingle is aimed
-	// at an existing square in SudokuMap
-
-	private Square mostRecentNakedSingle;
-
-	Square getMostRecentNakedSingle()
-	{
-		return mostRecentNakedSingle;
 	}
 
 
@@ -95,8 +81,8 @@ public class FullSudoku
 
 		for(int i=0;i<9;i++)
 		{
-			goodRow = theUnboxer.rowOfBoxSquare(boxNum,i);
-			goodCol = theUnboxer.colOfBoxSquare(boxNum,i);
+			goodRow = BoxTranslator.rowOfBoxSquare(boxNum,i);
+			goodCol = BoxTranslator.colOfBoxSquare(boxNum,i);
 
 			boxProvided[i] = SudokuMap[goodRow][goodCol];
 		}
@@ -142,8 +128,8 @@ public class FullSudoku
 
 		for(int a=0;a<9;a++)
 		{
-			goodRow = theUnboxer.rowOfBoxSquare(rootSquare.ownBox,a);
-			goodCol = theUnboxer.colOfBoxSquare(rootSquare.ownBox,a);
+			goodRow = BoxTranslator.rowOfBoxSquare(rootSquare.ownBox,a);
+			goodCol = BoxTranslator.colOfBoxSquare(rootSquare.ownBox,a);
 
 			// The only squares you still need from the box are the ones
 			// which share neither a row nor a column with rootSquare
@@ -163,21 +149,18 @@ public class FullSudoku
 	// a number from a square's possArray if is there, then put the
 	// square in the linked list if it is now down to 1 possibility.
 
-	boolean elimFromPossArray(Square a,Integer b)
+	boolean elimFromPossArray(Square squareToHit, Integer possOut)
 	{
 		if(impossiblePuzzle)
 			return false;
 
-		Square testSquare = a;
-		Integer possOut = b;
-
 		// If the square is already solved
 
-		if(testSquare.result != null)
+		if(squareToHit.result != null)
 		{
 			// If what we want to eliminate is the square's result
 
-			if(testSquare.result.equals(possOut))
+			if(squareToHit.result.equals(possOut))
 			{
 				// Puzzle is impossible
 
@@ -197,7 +180,7 @@ public class FullSudoku
 
 		// If the possibility is already eliminated from the possArray, return false
 
-		if(testSquare.possArray[possOut-1] == null)
+		if(squareToHit.possArray[possOut-1] == null)
 		{
 			return false;
 		}
@@ -205,7 +188,7 @@ public class FullSudoku
 		// If the square is not yet solved, the possibility we are eliminating is
 		// still in the possArray, and numPossLeft is already down to 1
 
-		if(testSquare.numPossLeft == 1)
+		if(squareToHit.numPossLeft == 1)
 		{
 			// Puzzle is impossible
 
@@ -217,18 +200,19 @@ public class FullSudoku
 			return true;
 		}
 
-		testSquare.possArray[possOut-1] = null;
-		testSquare.numPossLeft--;
+		squareToHit.possArray[possOut-1] = null;
+		squareToHit.numPossLeft--;
+		squareToHit.stepForPossOut[possOut-1] = stepOfSolve;
 
-		rowPossPrevalence[testSquare.ownRow][possOut-1]--;
-		colPossPrevalence[testSquare.ownCol][possOut-1]--;
-		boxPossPrevalence[testSquare.ownBox][possOut-1]--;
+		rowPossPrevalence[squareToHit.ownRow][possOut-1]--;
+		colPossPrevalence[squareToHit.ownCol][possOut-1]--;
+		boxPossPrevalence[squareToHit.ownBox][possOut-1]--;
 
 		// If this takes the numPossLeft down to one,
 		// put the square in the Linked List
 
-		if( testSquare.numPossLeft == 1 )
-			readyToFinalize.add(testSquare);
+		if( squareToHit.numPossLeft == 1 )
+			readyToFinalize.add(squareToHit);
 
 
 		// Since progress was made, return true
@@ -294,18 +278,18 @@ public class FullSudoku
 
 	// Naked Single Implementation
 
-	boolean NakedSingle()
+	StepInfo NakedSingle()
 	{
+		// If the puzzle has already been determined to be impossible, return null
+
 		if(impossiblePuzzle)
-			return false;
+			return null;
 
 
-		Square toRemove;
-
-		// If the linked list is empty, return false
+		// If the linked list is empty, return null
 
 		if(readyToFinalize.isEmpty())
-			return false;
+			return null;
 
 
 		// Otherwise, take a square out of the linked list,
@@ -313,22 +297,20 @@ public class FullSudoku
 		// and knock that possibility out of all squares
 		// sharing a row/column/box with this square.
 
-		toRemove = readyToFinalize.poll();
+		Square squareBeingSolved = readyToFinalize.poll();
 
 		for(int u=0;u<9;u++)
 		{
-			if(toRemove.possArray[u] != null)
-				toRemove.result = toRemove.possArray[u];
-
+			if(squareBeingSolved.possArray[u] != null)
+				squareBeingSolved.result = squareBeingSolved.possArray[u];
 		}
-		toRemove.possArray = null;
-		squaresSolved++;
 
-		knockOutInRCB(toRemove);
+		squareBeingSolved.possArray = null;
+		amountSquaresSolved++;
 
-		mostRecentNakedSingle = toRemove;
+		knockOutInRCB(squareBeingSolved);
 
-		return true;
+		return new Result_NakedSingle(squareBeingSolved);
 
 	} // NakedSingle()
 
@@ -382,7 +364,6 @@ public class FullSudoku
 							elimFromPossArray(squareWeUse,k);
 					}
 
-					squareWeUse.delHistory = null;
 					squareWeUse.answerAtStart = true;
 
 					initialInputSquares++;
@@ -400,5 +381,35 @@ public class FullSudoku
 		}
 
 	} // Constructor
+
+
+	private interface OneStepAttempt
+	{
+		StepInfo callMethod(FullSudoku mySudoku);
+	}
+
+	OneStepAttempt[] allStepAttempts = {
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return mySudoku.NakedSingle();} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return HiddenSingle.HiddenSingle(mySudoku);} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return PointingPairsTriples.PointingPairsTriples(mySudoku);} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return ClaimingPairsTriples.ClaimingPairsTriples(mySudoku);} }
+	};
+
+	StepInfo solveOneStep()
+	{
+		for(OneStepAttempt oneStepAttempt : allStepAttempts)
+		{
+			StepInfo stepInfo = oneStepAttempt.callMethod(this);
+
+			if(stepInfo != null)
+			{
+				stepOfSolve++;
+				return stepInfo;
+			}
+		}
+
+		return null;
+
+	} // solveOneStep()
 
 } // FullSudoku

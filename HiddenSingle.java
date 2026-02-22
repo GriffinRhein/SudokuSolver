@@ -1,7 +1,7 @@
-// Utilized by UsingLogicalMethods
-
 public class HiddenSingle
 {
+	private HiddenSingle() {}
+
 	// Check each row, column, and box to see whether
 	// any number which does not yet exist as a result
 	// in that house has been killed as a possibility
@@ -16,191 +16,124 @@ public class HiddenSingle
 	// not much point in making a separate step out of
 	// setting the result, call NakedSingle()
 
-	private FullSudoku mySudoku;
-	private MethodExplanations myMethods;
-
-	HiddenSingle(FullSudoku theSudoku, MethodExplanations theMethods)
-	{
-		mySudoku = theSudoku;
-		myMethods = theMethods;
-	}
-
-
-	private Square[] currentRCB = new Square[9];
-	private int[] herePossPrevalence = new int[9];
-
-	private int recordOfA;
-	private int recordOfB;
-
-	private Square squareInRCB;
-
-	private int traverseTheSet;
-	private boolean foundThatSquare;
-
-	private boolean didWeGetOne;
-
 
 	// Hidden Single Implementation
 
-	boolean HiddenSingle()
+	static StepInfo HiddenSingle(FullSudoku mySudoku)
 	{
-		didWeGetOne = false;
+		StepInfo stepInfo = null;
 
-		// a=0 for rows, a=1 for columns, a=2 for boxes
+		Square[] squaresOfRCB = null;
+		int[] possPrevalenceInRCB = null;
 
-		for(int a=0;a<3;a++)
+		for(HouseType typeOfRCB : HouseType.values())
 		{
-			recordOfA = a;
-
-			// b=0 for first RCB, b=1 for second RCB, etc.
-
-			for(int b=0;b<9;b++)
+			for(int intOfRCB=0;intOfRCB<9;intOfRCB++)
 			{
-				recordOfB = b;
-
-				if(a == 0)
+				if(typeOfRCB == HouseType.Row)
 				{
-					currentRCB = mySudoku.provideRow(b);
-					herePossPrevalence = mySudoku.rowPossPrevalence[b];
+					squaresOfRCB = mySudoku.provideRow(intOfRCB);
+					possPrevalenceInRCB = mySudoku.rowPossPrevalence[intOfRCB];
 				}
-				else if(a == 1)
+				else if(typeOfRCB == HouseType.Col)
 				{
-					currentRCB = mySudoku.provideCol(b);
-					herePossPrevalence = mySudoku.colPossPrevalence[b];
+					squaresOfRCB = mySudoku.provideCol(intOfRCB);
+					possPrevalenceInRCB = mySudoku.colPossPrevalence[intOfRCB];
 				}
-				else if(a == 2)
+				else if(typeOfRCB == HouseType.Box)
 				{
-					currentRCB = mySudoku.provideBox(b);
-					herePossPrevalence = mySudoku.boxPossPrevalence[b];
+					squaresOfRCB = mySudoku.provideBox(intOfRCB);
+					possPrevalenceInRCB = mySudoku.boxPossPrevalence[intOfRCB];
 				}
 
-				bringUpEachNumber();
 
+				// Each number from 1 through 9 gets a turn at bat
+
+				for(int testedPoss=1;testedPoss<=9;testedPoss++)
+				{
+					// Check whether the possPrevalence array indicates that there is
+					// only one square within the RCB capable of containing the number.
+
+					if(possPrevalenceInRCB[testedPoss-1] < 2)
+					{
+						stepInfo = examineRCB(mySudoku,typeOfRCB,intOfRCB,squaresOfRCB,testedPoss);
+
+						// Common understanding of Hidden Singles is that they immediately
+						// solve the square in question. No need to bother with a separate
+						// step to make the square's only remaining possibility its result
+
+						if(stepInfo != null)
+						{
+							// Since HiddenSingle is called only when NakedSingle has failed on
+							// the run through the loop, the linked list must have been empty
+							// before HiddenSingle was called, so any Hidden Single found
+							// and inserted into the list will be at the front.
+
+							mySudoku.NakedSingle();
+							return stepInfo;
+						}
+					}
+				}
 
 			} // Everything in this loop occurs once for each of the 27 sets
 		}
 
-
-		return didWeGetOne;
+		return stepInfo;
 
 	} // HiddenSingle()
 
 
-	private void bringUpEachNumber()
-	{
-		// Each number from 1 through 9 gets a turn at bat
-
-		for(int testInt=1;testInt<=9;testInt++)
-		{
-			// Continue if we haven't already found a Hidden Single
-
-			if(!(didWeGetOne))
-			{
-				// Check whether the PossPrevalence array indicates that there is
-				// only one square within the RCB capable of containing the number.
-
-				if(herePossPrevalence[testInt-1] < 2)
-				{
-					examineRCB(testInt);
-				}
-			}
-		}
-
-	} // bringUpEachNumber()
-
-
-	private void examineRCB(int testInt)
+	static private StepInfo examineRCB(FullSudoku mySudoku, HouseType typeOfRCB, int intOfRCB, Square[] squaresOfRCB, int testedPoss)
 	{
 		// Go through the RCB and find the square where the number is still available.
 
-		traverseTheSet = 0;
-		foundThatSquare = false;
-
-		// Note that a number which has only one possible square retains PossPrevalence of 1
-		// after being officially solved for the RCB, so most of the time when we reach this
-		// point it will be with the number already in the result slot for some square.
-
-		while(traverseTheSet<9 && !(foundThatSquare))
+		for(Square squareInRCB : squaresOfRCB)
 		{
-			squareInRCB = currentRCB[traverseTheSet];
-
-
-			// If you find a square that is already solved
-
+			// For when the square is solved
 			if(squareInRCB.result != null)
 			{
-				// Just check whether its result is this number
+				// Check whether the testedPoss is the square's result
 
-				if(squareInRCB.result == testInt)
+				if(squareInRCB.result != testedPoss)
 				{
-					// If so, no need to look any further through the set.
-					// Just come back to this function with the next number.
-
-					foundThatSquare = true;
+					// If not, on to the next square.
+					continue;
+				}
+				else				
+				{
+					// If so, no need to look any further through the RCB for this testedPoss.
+					return null;
 				}
 			}
 
-
-			// If you find a square that is not solved
-
+			// For when the square is not solved
 			else
 			{
-				// By the time we have reached this point, we know that only
-				// one square in this RCB contains the number in its possArray,
-				// and that the square we are on is not solved.
+				// Check whether the testedPoss is in the square's possArray
 
-				if(squareInRCB.possArray[testInt-1] != null)
+				if(squareInRCB.possArray[testedPoss-1] == null)
 				{
-					// If this square contains the number in its possArray, it is
-					// the only square in the RCB to still do so, and therefore
-					// that number must be its result.
+					// If not, on to the next square.
+					continue;
+				}
+				else
+				{
+					// If so, it must be the only square in the RCB to do so. This is a Hidden Single.
 
-					boolean temp;
-
-					for(int g=1;g<=9;g++)
+					for(int i=1;i<=9;i++)
 					{
-						if(g != testInt)
+						if(i != testedPoss)
 						{
-							temp = mySudoku.elimFromPossArray(squareInRCB,g);
-
-							if(temp)
-							{
-								didWeGetOne = true;
-
-								myMethods.SquareA = squareInRCB;
-								myMethods.foundResult = testInt;
-								myMethods.intTargetSet = recordOfB;
-								myMethods.houseTargetType = HouseType.values()[recordOfA];
-							}
+							mySudoku.elimFromPossArray(squareInRCB,i);
 						}
 					}
 
-					foundThatSquare = true;
+					return new Result_HiddenSingle(squareInRCB,testedPoss,typeOfRCB,intOfRCB);
 				}
 			}
-
-
-			// On to the next square in the row/column/box, assuming we have not
-			// found either a square which already contains the number or the
-			// lone square in the row/column/box which must contain the number.
-
-			traverseTheSet++;
 		}
 
-
-		// Common understanding of Hidden Singles is that they immediately
-		// solve the square in question. No need to bother with a separate
-		// step to make the square's only remaining possibility its result
-
-		if(didWeGetOne)
-		{
-			// Since HiddenSingle is called only when NakedSingle has failed on
-			// the run through the loop, the linked list must have been empty
-			// before HiddenSingle was called, so any Hidden Single found
-			// and inserted into the list will be at the front.
-
-			mySudoku.NakedSingle();
-		}
+		return null;
 
 	} // examineRCB()
 

@@ -360,7 +360,7 @@ public class NonhumanSolver
 		{
 			// For all squares that were not previously solved, give them their results,
 			// set their numPossLeft to 1, set their possArray to null, and increment
-			// squaresSolved. We should end at 81 squaresSolved during any success.
+			// amountSquaresSolved. We should end at 81 amountSquaresSolved during any success.
 
 			Square currentSquare;
 
@@ -376,7 +376,7 @@ public class NonhumanSolver
 						currentSquare.possArray = null;
 						currentSquare.numPossLeft = 1;
 
-						ourSudoku.squaresSolved++;
+						ourSudoku.amountSquaresSolved++;
 					}
 				}
 			}

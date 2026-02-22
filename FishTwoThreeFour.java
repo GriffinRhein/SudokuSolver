@@ -1,7 +1,6 @@
-// Utilized by UsingLogicalMethods
-
 public class FishTwoThreeFour
 {
+/*
 	private FullSudoku mySudoku;
 	private MethodExplanations myMethods;
 
@@ -495,5 +494,5 @@ public class FishTwoThreeFour
 
 		return didWeGetOne;
 	}
-
+*/
 } // FishTwoThreeFour

@@ -1,7 +1,6 @@
-// Utilized by UsingLogicalMethods
-
 public class XY_Wing
 {
+/*
 	// Note that in an XY Wing, all three cells involved must contain EXACTLY
 	// two numbers in their possArray, or the logic does not work.
 
@@ -351,5 +350,5 @@ public class XY_Wing
 		return false;
 
 	} // doYouElimThisSquare()
-
+*/
 } // XY_Wing

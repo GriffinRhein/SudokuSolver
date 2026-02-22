@@ -1,7 +1,6 @@
-// Utilized by UsingLogicalMethods
-
 public class NakedPairsTripsQuads
 {
+/*
 	private FullSudoku mySudoku;
 	private MethodExplanations myMethods;
 
@@ -403,5 +402,5 @@ public class NakedPairsTripsQuads
 		return didWeGetOne;
 
 	} // NakedQuads()
-
+*/
 } // NakedPairsTripsQuads
