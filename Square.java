@@ -25,6 +25,11 @@ public class Square
 		return "["+String.valueOf(ownRow+1)+"]["+String.valueOf(ownCol+1)+"]";
 	}
 
+	boolean sameSquare(Square otherSquare)
+	{
+		return (this.ownRow == otherSquare.ownRow && this.ownCol == otherSquare.ownCol);
+	}
+
 	// Constructor
 
 	Square(int selfRow, int selfCol)
