@@ -17,7 +17,7 @@ public class NakedPairsTripsQuads
 	{
 		return NakedSubsets(mySudoku,PTQ.Trip);
 
-	} // NakedTriples()
+	} // NakedTrips()
 
 	static StepInfo NakedQuads(FullSudoku mySudoku)
 	{

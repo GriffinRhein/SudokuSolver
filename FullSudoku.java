@@ -395,7 +395,10 @@ public class FullSudoku
 		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return ClaimingPairsTriples.ClaimingPairsTriples(mySudoku);} },
 		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return NakedPairsTripsQuads.NakedPairs(mySudoku);} },
 		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return NakedPairsTripsQuads.NakedTrips(mySudoku);} },
-		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return NakedPairsTripsQuads.NakedQuads(mySudoku);} }
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return NakedPairsTripsQuads.NakedQuads(mySudoku);} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return HiddenPairsTripsQuads.HiddenPairs(mySudoku);} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return HiddenPairsTripsQuads.HiddenTrips(mySudoku);} },
+		new OneStepAttempt(){public StepInfo callMethod(FullSudoku mySudoku){return HiddenPairsTripsQuads.HiddenQuads(mySudoku);} }
 	};
 
 	StepInfo solveOneStep()

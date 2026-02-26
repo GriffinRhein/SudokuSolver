@@ -72,8 +72,7 @@ public class Result_NakedPairsTripsQuads extends StepInfo
 
                 stringToBuild.append("\n\n");
 
-            break;
-
+                break;
 
             case Quad:
 
@@ -89,7 +88,7 @@ public class Result_NakedPairsTripsQuads extends StepInfo
 
                 stringToBuild.append("\n\n");
 
-            break;
+                break;
         }
 
         stringToBuild = addElimStrings(stringToBuild,getSolveMethod(),elimList);
