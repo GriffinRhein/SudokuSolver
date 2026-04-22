@@ -89,7 +89,7 @@ public class Result_HiddenPairsTripsQuads extends StepInfo
                 break;
         }
 
-        stringToBuild = addElimStrings(stringToBuild,getSolveMethod(),elimList);
+        stringToBuild = addElimStrings(stringToBuild,elimList);
 
         return stringToBuild.toString();
     }

@@ -46,23 +46,14 @@ public abstract class StepInfo
 	} // coordStr()
 
 
-    StringBuilder addElimStrings(StringBuilder s, SolveMethod solveMethod, List<SquaresOfKilledPoss> listOfPossAndSquares)
+    StringBuilder addElimStrings(StringBuilder s, List<SquaresOfKilledPoss> listOfPossAndSquares)
 	{
-		SolveMethod.MoreGeneral genMethod = solveMethod.getGenMethod();
-		int lookStr;
-
 		for(int i=0;i<listOfPossAndSquares.size();i++)
 		{
 			SquaresOfKilledPoss possAndSquares = listOfPossAndSquares.get(i);
+			int lookStr = 0;
 
-			switch(genMethod)
-			{
-				case PCNH: s.append(possAndSquares.killedPoss+" is eliminated from "); break;
-				case Fish: /* To be reintegrated */ break;
-				case Wing: /* To be reintegrated */ break;
-			}
-
-			lookStr = 0;
+			s.append(possAndSquares.killedPoss+" is eliminated from ");
 
 			if(possAndSquares.squaresList.isEmpty())
 				s.append("no squares.");
@@ -72,12 +63,7 @@ public abstract class StepInfo
 				{
 					// Write out the coordinates of the square where the number was eliminated
 
-					switch(genMethod)
-					{
-						case PCNH: s.append(possAndSquares.squaresList.get(lookStr).getUserCoordinateString()); break;
-						case Fish: /* To be reintegrated */ break;
-						case Wing: /* To be reintegrated */ break;
-					}
+					s.append(possAndSquares.squaresList.get(lookStr).getUserCoordinateString());
 
 
 					// Grammar

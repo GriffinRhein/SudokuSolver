@@ -43,7 +43,7 @@ public class Result_PointingPairsTriples extends StepInfo
         stringToBuild.append(houseStr(typeOfRC,intOfRC)+" outside of "+houseStr(HouseType.Box,intOfBox)+".");
         stringToBuild.append("\n\n");
 
-        stringToBuild = addElimStrings(stringToBuild,getSolveMethod(),Collections.singletonList(possAndSquares));
+        stringToBuild = addElimStrings(stringToBuild,Collections.singletonList(possAndSquares));
         
         return stringToBuild.toString();
     }

@@ -91,7 +91,7 @@ public class Result_NakedPairsTripsQuads extends StepInfo
                 break;
         }
 
-        stringToBuild = addElimStrings(stringToBuild,getSolveMethod(),elimList);
+        stringToBuild = addElimStrings(stringToBuild,elimList);
 
         return stringToBuild.toString();
     }
